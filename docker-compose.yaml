@@ -1,0 +1,31 @@
+version: '3.7'
+volumes:
+  prom-node-exporter-data: {}
+services:
+  prom-node-exporter:
+     restart: unless-stopped
+     container_name: prom-node-exporter
+     image: prom/node-exporter
+     volumes:
+      - prom-node-exporter-data:/data
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+     ports:
+       - 9100:9100
+     command:
+       - '--path.procfs=/host/proc'
+       - '--path.rootfs=/rootfs'
+       - '--path.sysfs=/host/sys'
+       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+       - '--collector.textfile.directory=/data'
+
+  bashttpd-sidecar:
+    image: emurgornd/bashttpd-prom-sidecar
+    volumes:
+      - prom-node-exporter-data:/data
+    # - $PWD/assets/etc/metrics.d:/etc/metrics.d
+    #ports:
+    #  - 9999:9999
+    #environment:
+    #  - LISTEN_PORT=9999 

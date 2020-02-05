@@ -1,0 +1,17 @@
+#!/bin/bash
+
+source /assets/bin/entrypoint.functions
+
+dump-docker-environment
+
+LISTEN_PORT=${LISTEN_PORT:disabled}
+if (( LISTEN_PORT > 1024 && number <= 65535))
+then
+  socat TCP-LISTEN:${LISTEN_PORT},reuseaddr,fork EXEC:/assets/bin/bashttpd
+else
+  while true
+  do
+    /assets/bin/get-metrics > /data/bashttpd-prom-sidecar.prom
+    sleep ${SCRAPE_INTERVAL:-10}
+  done
+fi
