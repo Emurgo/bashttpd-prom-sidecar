@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /etc/profile.d/docker-environment.sh
+source /var/tmp/docker-environment.sh
 
 for file in /assets/etc/metrics.d/*sh
 do
